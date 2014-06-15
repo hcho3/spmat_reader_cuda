@@ -12,10 +12,11 @@ then
     exit 1
 fi
 read -p 'Downloading MAT I/O Library. Press any key to continue...'
-if [ ! -f $MATIO_VER.tar.gz ]
+if [ -f $MATIO_VER.tar.gz ]
 then
-    wget $MATIO_URL
+    rm $MATIO_VER.tar.gz
 fi
+wget $MATIO_URL
 tar xvf $MATIO_VER.tar.gz
 mv $MATIO_VER matio
 cd matio

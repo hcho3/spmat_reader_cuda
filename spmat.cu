@@ -17,12 +17,19 @@ SparseMatrix::SparseMatrix(const char *filename)
         fprintf(stderr, "Error opening MAT file \"%s\"!\n", filename);
         exit(1);
     }
-    matvar = Mat_VarRead(matfp, "A");
+    matvar = Mat_VarReadNext(matfp);
     if ( NULL == matvar ) {
-        fprintf(stderr,"Variable 'A' not found, or error "
-                "reading MAT file\n");
+        fprintf(stderr, "No sparse matrix found / error reading MAT file\n");
         Mat_Close(matfp);
         exit(1);
+    }
+
+    if (matvar->rank != 2 || matvar->class_type != MAT_C_SPARSE) {
+        fprintf(stderr, "The given MAT file does not contain a valid "
+            "2D sparse matrix.\n");
+        Mat_VarFree(matvar);
+        Mat_Close(matfp);
+        exit(1); 
     }
 
     nrows = matvar->dims[0];

@@ -8,6 +8,7 @@ int main(void)
 
     int i;
 
+    printf("Loading sample.mat ...\n");
     printf("See http://docs.nvidia.com/cuda/cusparse/index.html"
            "#compressed-sparse-row-format-csr to see the example matrix.\n");
 
