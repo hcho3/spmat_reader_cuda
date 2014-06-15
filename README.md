@@ -102,3 +102,7 @@ latest tarball from the project website and extract it to the `matio/`
 subdirectory. Make sure to add `--prefix=$PWD/matio` to the run of
 `./configure`, so that the compiled result will stay inside of the current
 directory.
+
+Credits
+----
+Hyunsu "Philip" Cho and Sam Johnson, Trinity College, Hartford, CT
