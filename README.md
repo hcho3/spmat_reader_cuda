@@ -37,7 +37,7 @@ SparseMatrixDevice* spdp;
 cudaMalloc(&spdp, sizeof(SparseMatrixDevice));
 cudaMemcpy(spdp, &spd, sizeof(SparseMatrixDevice), cudaMemcpyHostToDevice);
 ```
-AWe still have to remeber to copy both the structure and its member arrays, but
+We still have to remember to copy both the structure and its member arrays, but
 the use of constructor helps keep the code short.
 
 **Copy a matrix (CSR layout) to GPU memory:**
@@ -54,7 +54,7 @@ cudaMemcpy(spdp, &spd, sizeof(SparseMatrixDeviceCSR), cudaMemcpyHostToDevice);
 **Pass a sparse matrix into a host function:**
 ```cpp
 void serial_dotprod(const SparseMatrix& sp, int col1, int col2)
-{
+{    
     ...
 }
 ```
@@ -64,18 +64,16 @@ costly to leave to implicit behaviors. If you really want to make a copy of
 `SparseMatrix`, simply do a memcpy for each data member.
 
 **Pass a sparse matrix into a CUDA kernel:**
-
-First copy the matrix to GPU memory; then just pass the pointer into the kernel.
+Pass a pointer to the object. The matrix must already be on GPU memory.
 ```cuda
-SparseMatrix sp("sample.mat"); // load a sparse matrix to host memory
-SparseMatrixCSR sp_csr(sp); // convert the matrix into CSR layout
-SparseMatrixDeviceCSR spd(sp_csr); // copy the inner data to GPU ...
-// ... and then copy the container itself to GPU
-SparseMatrixDeviceCSR* spdp;
-cudaMalloc(&spdp, sizeof(SparseMatrixDeviceCSR));
-cudaMemcpy(spdp, &spd, sizeof(SparseMatrixDeviceCSR), cudaMemcpyHostToDevice);
-dotprod<<<1024, 1024>>>(spdp);
+__global__ void dotprod(SparseMatrixDevice *spd, int col1, int col2)
+{
+    ...
+}
 ```
+**De-allocate a sparse matrix**
+Thanks to the destructor, `SparseMatrix` and `SparseMatrixDevice` will be
+de-allocated whenever they go outside of scope.
 
 How to compile the library
 ----
@@ -94,7 +92,7 @@ Do not forget `-lz -lm` at the end of the compilation option.
 
 Dependencies
 ----
-  - MAT File I/O Libary: http://sourceforge.net/projects/matio/
+  - MAT File I/O Library: http://sourceforge.net/projects/matio/
   
     I've included a script named `get_matio.sh` that attempts to download and
 install this dependency. *In the event where the script fails:* download the
