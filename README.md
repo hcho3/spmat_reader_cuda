@@ -30,26 +30,22 @@ Again, the constructor does all the heavy lifting of format conversion.
 
 **Copy a matrix (CSC layout) to GPU memory:**
 ```cuda
-SparseMatrix sp("sample.mat"); // load a sparse matrix to host memory
-SparseMatrixDevice spd(sp); // copy the inner data to GPU ...
-// ... and then copy the container itself to GPU
-SparseMatrixDevice* spdp;
-cudaMalloc(&spdp, sizeof(SparseMatrixDevice));
-cudaMemcpy(spdp, &spd, sizeof(SparseMatrixDevice), cudaMemcpyHostToDevice);
+SparseMatrix sp("sample.mat");
+SparseMatrixDevice spd(sp);
+
+kernel<<<1, 1>>>(spd.devptr);
 ```
-We still have to remember to copy both the structure and its member arrays, but
-the use of constructor helps keep the code short.
+Just remember to use `devptr` member when calling a GPU kernel.
 
 **Copy a matrix (CSR layout) to GPU memory:**
 ```cuda
-SparseMatrix sp("sample.mat"); // load a sparse matrix to host memory
+SparseMatrix sp("sample.mat");
 SparseMatrixCSR sp_csr(sp); // convert the matrix into CSR layout
-SparseMatrixDeviceCSR spd(sp_csr); // copy the inner data to GPU ...
-// ... and then copy the container itself to GPU
-SparseMatrixDeviceCSR* spdp;
-cudaMalloc(&spdp, sizeof(SparseMatrixDeviceCSR));
-cudaMemcpy(spdp, &spd, sizeof(SparseMatrixDeviceCSR), cudaMemcpyHostToDevice);
+SparseMatrixDeviceCSR spd_csr(sp_csr);
+
+kernel<<<1, 1>>>(spd_csr.devptr);
 ```
+Here, too, remember to use the `devptr` member.
 
 **Pass a sparse matrix into a host function:**
 ```cpp
@@ -63,14 +59,6 @@ neither copy constructors nor assignments; we felt that copy semantics are too
 costly to leave to implicit behaviors. If you really want to make a copy of
 `SparseMatrix`, simply do a memcpy for each data member.
 
-**Pass a sparse matrix into a CUDA kernel:**
-Pass a pointer to the object. The matrix must already be on GPU memory.
-```cuda
-__global__ void dotprod(SparseMatrixDevice *spd, int col1, int col2)
-{
-    ...
-}
-```
 **De-allocate a sparse matrix**
 Thanks to the destructor, `SparseMatrix` and `SparseMatrixDevice` will be
 de-allocated whenever they go outside of scope.

@@ -74,6 +74,11 @@ SparseMatrixDevice::SparseMatrixDevice(const SparseMatrix& sp)
         cudaMemcpyHostToDevice);
     cudaMemcpy(cscColPtr, sp.cscColPtr, (ncols+1)*sizeof(int),
         cudaMemcpyHostToDevice);
+
+    // put the container itself to GPU
+    cudaMalloc(&devptr, sizeof(SparseMatrixDevice));
+    cudaMemcpy(devptr, this, sizeof(SparseMatrixDevice),
+        cudaMemcpyHostToDevice);
 }
 
 SparseMatrixDevice::~SparseMatrixDevice()
@@ -81,6 +86,8 @@ SparseMatrixDevice::~SparseMatrixDevice()
     cudaFree(cscVal);
     cudaFree(cscRowInd);
     cudaFree(cscColPtr);
+
+    cudaFree(devptr);
 }
 
 SparseMatrixCSR::SparseMatrixCSR(const SparseMatrix& sp)
@@ -163,6 +170,11 @@ SparseMatrixDeviceCSR::SparseMatrixDeviceCSR(const SparseMatrixCSR& sp)
         cudaMemcpyHostToDevice);
     cudaMemcpy(csrRowPtr, sp.csrRowPtr, (nrows+1)*sizeof(int),
         cudaMemcpyHostToDevice);
+
+    // put the container itself to GPU
+    cudaMalloc(&devptr, sizeof(SparseMatrixDeviceCSR));
+    cudaMemcpy(devptr, this, sizeof(SparseMatrixDeviceCSR),
+        cudaMemcpyHostToDevice);
 }
 
 SparseMatrixDeviceCSR::~SparseMatrixDeviceCSR()
@@ -170,4 +182,6 @@ SparseMatrixDeviceCSR::~SparseMatrixDeviceCSR()
     cudaFree(csrVal);
     cudaFree(csrColInd);
     cudaFree(csrRowPtr);
+
+    cudaFree(devptr);
 }

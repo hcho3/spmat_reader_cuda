@@ -27,6 +27,8 @@ struct SparseMatrixDevice : Nocopy { // CSC layout, GPU memory
     int *cscRowInd;
     int *cscColPtr;
 
+    SparseMatrixDevice *devptr; // use this pointer for kernel launches
+
     // load matrix from main memory
     SparseMatrixDevice(const SparseMatrix& sp);
     ~SparseMatrixDevice();
@@ -51,6 +53,8 @@ struct SparseMatrixDeviceCSR : Nocopy {
     double *csrVal;
     int *csrColInd;
     int *csrRowPtr;
+
+    SparseMatrixDeviceCSR *devptr; // use this pointer for kernel launches
 
     // load matrix from main memory
     SparseMatrixDeviceCSR(const SparseMatrixCSR& sp);
