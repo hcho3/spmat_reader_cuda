@@ -17,6 +17,8 @@ Usage
 ----
 **Load a MAT file (MATLAB(R) binary format) into memory:**
 ```cuda
+#include "spmat.h"
+...
 SparseMatrix sp("sample.mat");
 ```
 Since MAT files store nonzero entries in CSC layout, `SparseMatrix` will do so
@@ -24,12 +26,16 @@ as well. All the work is done in its constructor.
 
 **Convert the matrix into CSC layout:**
 ```cuda
+#include "spmat.h"
+...
 SparseMatrixCSR sp_csr(sp);
 ```
 Again, the constructor does all the heavy lifting of format conversion.
 
 **Copy a matrix (CSC layout) to GPU memory:**
 ```cuda
+#include "spmat.h"
+...
 SparseMatrix sp("sample.mat");
 SparseMatrixDevice spd(sp);
 
@@ -39,6 +45,8 @@ Just remember to use `devptr` member when calling a GPU kernel.
 
 **Copy a matrix (CSR layout) to GPU memory:**
 ```cuda
+#include "spmat.h"
+...
 SparseMatrix sp("sample.mat");
 SparseMatrixCSR sp_csr(sp); // convert the matrix into CSR layout
 SparseMatrixDeviceCSR spd_csr(sp_csr);
@@ -73,8 +81,8 @@ make tester
 How to compile programs that use the library
 ----
 ```bash
-nvcc -O3 -arch=sm_35 -rdc=true -o tester tester.cu -L[path to libspmat.a]
--lspmat -lz -lm
+nvcc -O3 -arch=sm_35 -rdc=true -o tester tester.cu -I[path to spmat.h]
+-L[path to libspmat.a] -lspmat -lz -lm
 ```
 Do not forget `-lz -lm` at the end of the compilation option.
 
