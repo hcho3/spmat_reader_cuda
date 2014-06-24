@@ -10,13 +10,19 @@ This library provides several C++ containers:
 The containers are nothing more than a collection of three arrays that together
 indicate the values and positions of nonzero entries. See
 http://docs.nvidia.com/cuda/cusparse/#matrix-formats
-for a detailed explanation for Compressed Sparse Columns (CSC) and Compressed
-Sparse Rows (CSR) layouts. (Use Firefox to properly display equations in the
-documentation.)
+for a detailed explanation of CSC and CSR layouts.
+(Use Firefox to properly display equations in the documentation.)
+
+**Disclaimer**:Unfortunately, this library does not support dynamic insertion
+of nonzero entries. We use arrays as underlying storage, which have fixed size
+after their initial allocation. Take a look at [parallel skiplists]
+(https://github.com/hcho3/skiplist_cuda) if you want to keep a dynamic list
+of nonzero entries.
 
 Usage
 ----
 See `tester.cu` for a short sample program.
+
 **Load a MAT file (MATLAB(R) binary format) into memory:**
 ```cuda
 #include "spmat.h"
