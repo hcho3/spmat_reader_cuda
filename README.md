@@ -11,10 +11,12 @@ The containers are nothing more than a collection of three arrays that together
 indicate the values and positions of nonzero entries. See
 http://docs.nvidia.com/cuda/cusparse/#matrix-formats
 for a detailed explanation for Compressed Sparse Columns (CSC) and Compressed
-Sparse Rows (CSR) layouts.
+Sparse Rows (CSR) layouts. (Use Firefox to properly display equations in the
+documentation.)
 
 Usage
 ----
+See `tester.cu` for a short sample program.
 **Load a MAT file (MATLAB(R) binary format) into memory:**
 ```cuda
 #include "spmat.h"
@@ -40,6 +42,11 @@ SparseMatrix sp("sample.mat");
 SparseMatrixDevice spd(sp);
 
 kernel<<<1, 1>>>(spd.devptr);
+...
+__global__ void kernel(SparseMatrixDevice *spd)
+{
+    // use spd->cscVal, spd->cscRowInd, and spd->cscColPtr
+}
 ```
 Just remember to use `devptr` member when calling a GPU kernel.
 
@@ -52,6 +59,11 @@ SparseMatrixCSR sp_csr(sp); // convert the matrix into CSR layout
 SparseMatrixDeviceCSR spd_csr(sp_csr);
 
 kernel<<<1, 1>>>(spd_csr.devptr);
+...
+__global__ void kernel(SparseMatrixDeviceCSR *spd)
+{
+    // use spd->csrVal, spd->csrColInd, spd->csrRowPtr
+}
 ```
 Here, too, remember to use the `devptr` member.
 
@@ -59,7 +71,7 @@ Here, too, remember to use the `devptr` member.
 ```cpp
 void serial_dotprod(const SparseMatrix& sp, int col1, int col2)
 {    
-    ...
+    // use sp.cscVal, sp.cscRowInd, sp.cscColPtr
 }
 ```
 IMPORTANT: Pass the object by reference, not by value. The containers support
